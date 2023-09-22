@@ -7,7 +7,25 @@ from time_statistics import time_statistics
 
 
 def event_loop():
-    print("Going into while loop" + 3*"\n")
+    global T
+
+    # Internal variables
+    byte_size = 2048
+    n_validation_msgs = 5
+    counter = 0
+    p = CONST()
+    t = None
+    verbose = 1 # 0 = no, 1 = delta & PONG, 2 = mu & std
+
+    # Establish socket
+    sock = socket.socket()
+    sock.connect((p.server, p.port))
+    sock.send(f"PASS {p.token}\n".encode('utf-8'))
+    sock.send(f"NICK {p.nickname}\n".encode('utf-8'))
+    sock.send(f"JOIN {p.channel}\n".encode('utf-8'))
+
+
+    print("Going into while loop" + 1*"\n")
     while True:
         resp: str = sock.recv(byte_size).decode('utf-8')
 
@@ -36,25 +54,9 @@ def event_loop():
 
 if __name__ == "__main__":
 
-    # Internal variables
-    byte_size = 2048
-    n_validation_msgs = 5
-    counter = 0
-    p = CONST()
     T = []
-    t = None
-    verbose = 0 # 0 = no, 1 = delta & PONG, 2 = mu & std
-
-    # Establish socket
-    sock = socket.socket()
-    sock.connect((p.server, p.port))
-    sock.send(f"PASS {p.token}\n".encode('utf-8'))
-    sock.send(f"NICK {p.nickname}\n".encode('utf-8'))
-    sock.send(f"JOIN {p.channel}\n".encode('utf-8'))
-
-    time.sleep(5)
 
     try:
         event_loop()
     except KeyboardInterrupt:
-        time_statistics(T)
+        time_statistics(T, CONST())
