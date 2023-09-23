@@ -58,5 +58,5 @@ if __name__ == "__main__":
 
     try:
         event_loop()
-    except KeyboardInterrupt:
+    except:
         time_statistics(T, CONST())
